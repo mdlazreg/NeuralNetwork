@@ -27,14 +27,14 @@ class NeuralLayer {
         double * m_fOutputDelta;
     public:
         NeuralLayer(int iHeight, int iWidth, double fLearningRate, double fMomentum);
-        void NeuralLayer::PrintInput();
-        void NeuralLayer::PrintWeights();
-        void NeuralLayer::PrintOutput();
-        void NeuralLayer::ForwardCalculate();
-        void NeuralLayer::BackwardCalculate();
-        void NeuralLayer::SetInput(double * Input);
-        void NeuralLayer::SetInputDelta(double * InputDetla);
-        double * NeuralLayer::GetOutputDelta();
-        double * NeuralLayer::GetOutput();
-        int NeuralLayer::GetHeight();
+        void PrintInput();
+        void PrintWeights();
+        void PrintOutput();
+        void ForwardCalculate();
+        void BackwardCalculate();
+        void SetInput(double * Input);
+        void SetInputDelta(double * InputDetla);
+        double * GetOutputDelta();
+        double * GetOutput();
+        int GetHeight();
 };

@@ -33,18 +33,18 @@ class NeuralNetwork {
         double * * m_arrayInput;
     public:
         NeuralNetwork(int iPatterns, double * * fInput, double * * fTarget, vector<int> vectorLayers, double fSuccess, double fLearningRate, double fMomentum);
-        void NeuralNetwork::RandomizePatterns();
-        void NeuralNetwork::SetRandomizedInput(int p);
-        int NeuralNetwork::GetPatterns();
-        void NeuralNetwork::PrintInputs();
-        void NeuralNetwork::PrintOutputs();
-        void NeuralNetwork::PrintWeights();
-        void NeuralNetwork::PrintPatterns();
-        void NeuralNetwork::ForwardCalculate();
-        void NeuralNetwork::CalculateError();
-        void NeuralNetwork::BackwardCalculate();
-        void NeuralNetwork::SetError(double fError);
-        double NeuralNetwork::GetError();
-        double NeuralNetwork::GetSuccess();
+        void RandomizePatterns();
+        void SetRandomizedInput(int p);
+        int GetPatterns();
+        void PrintInputs();
+        void PrintOutputs();
+        void PrintWeights();
+        void PrintPatterns();
+        void ForwardCalculate();
+        void CalculateError();
+        void BackwardCalculate();
+        void SetError(double fError);
+        double GetError();
+        double GetSuccess();
 };
 
