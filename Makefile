@@ -1,17 +1,26 @@
 TARGET = NeuralNetwork
 CC = g++
 CPPFLAGS = -std=c++0x 
-OBJS =  Main.o Input.o NeuralNetwork.o NeuralLayer.o
+SRCs =  Main.cpp Input.cpp NeuralNetwork.cpp NeuralLayer.cpp
+
+OBJS = $(patsubst %.cpp,obj/%.o,$(SRCs))
 
 .PHONY : all
 all: $(TARGET)
 
-$(OBJS): %.o: %.cpp
+$(OBJS): | obj
+
+obj:
+	@mkdir -p $@
+
+
+obj/%.o: %.cpp
 	$(CC) -c $(CPPFLAGS) $< -o $@
 
 all: $(TARGET)
 
 clean:
-	rm -rf $(TARGET) $(OBJS)
+	rm -rf $(TARGET) obj
+
 $(TARGET): $(OBJS)
 	$(CC) $(CPPFLAGS) -o $(TARGET) $(OBJS)
