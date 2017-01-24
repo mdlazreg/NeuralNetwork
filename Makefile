@@ -1,7 +1,7 @@
 TARGET = NeuralNetwork
 CC = g++
 CPPFLAGS = -std=c++0x 
-SRCs =  Main.cpp Input.cpp NeuralNetwork.cpp NeuralLayer.cpp
+SRCs =  Main.cpp Input.cpp NeuralNetwork.cpp DualLayer.cpp
 
 OBJS = $(patsubst %.cpp,obj/%.o,$(SRCs))
 
