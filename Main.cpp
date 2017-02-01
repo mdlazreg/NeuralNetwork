@@ -1,6 +1,6 @@
 #include "Input.h"
 #include "NeuralNetwork.h"
-
+#include <windows.h>
 int main(void)
 {
     double fError = 0.0004;
@@ -40,10 +40,10 @@ int main(void)
     cout << "\n";
     */
 
-    NeuralNetwork * pNeuralNetwork = new NeuralNetwork(10,Input, Target, vectorLayers, fError, fLearningRate, fMomentum);
+    NeuralNetwork * pNeuralNetwork = new NeuralNetwork(iPatterns,Input, Target, vectorLayers, fError, fLearningRate, fMomentum);
     int iTrainingCycleMax = 2147483647;
     int iTrainingCycle = 0;
-
+    pNeuralNetwork->SetError(0);
     while(iTrainingCycle < iTrainingCycleMax) {
         iTrainingCycle++;
         if (iTrainingCycle % 10000 == 0) {
@@ -52,9 +52,12 @@ int main(void)
         pNeuralNetwork->RandomizePatterns();
         pNeuralNetwork->SetError(0);
         for( int q = 0 ; q < pNeuralNetwork->GetPatterns() ; q++ ) {
+            //cout << "pattern " << q << endl << flush;
             pNeuralNetwork->SetRandomizedInput(q);
 
             //pNeuralNetwork->PrintInputs();
+
+            //pNeuralNetwork->PrintWeights();
 
             pNeuralNetwork->ForwardCalculate();
 
@@ -63,6 +66,9 @@ int main(void)
             pNeuralNetwork->CalculateError();
 
             pNeuralNetwork->BackwardCalculate();
+
+            //break;
+            //Sleep(10000);
         }
         if( pNeuralNetwork->GetError() <= pNeuralNetwork->GetSuccess() )     
         {

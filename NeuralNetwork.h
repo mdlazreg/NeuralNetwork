@@ -7,7 +7,7 @@
 #include <list>
 #include <stdio.h>
 #include <stdlib.h>
-#include "NeuralLayer.h"
+#include "FullyConnectedLayer.h"
 
 using namespace std;
 #define NUMBER_WIDTH 8
@@ -17,23 +17,23 @@ class NeuralNetwork {
     private:
         int m_iPatterns;
         int m_iInput;
-        int m_iTarget;
+        int m_iOutput;
         int   * m_iRandomizedIndex;
         vector<int> m_vectorRandomizedIndex;
         vector<int> m_vectorLayers;
-        vector<NeuralLayer *> m_vectorNeuralLayers;
-        NeuralLayer * m_pLastLayer;
-        double m_fError;
-        double m_fSuccess;
-        double m_fLearningRate;
-        double m_fMomentum;
-        double * m_fTarget;
-        double * m_fInputDelta;
+        vector<Layer *> m_vectorInputOutputLayers;
+        Layer * m_pLastLayer;
+        double m_dError;
+        double m_dSuccess;
+        double m_dLearningRate;
+        double m_dMomentum;
+        double * m_dInputDelta;
         double * * m_arrayTarget;
         double * * m_arrayInput;
     public:
-        NeuralNetwork(int iPatterns, double * * fInput, double * * fTarget, vector<int> vectorLayers, double fSuccess, double fLearningRate, double fMomentum);
+        NeuralNetwork(int iPatterns, double * * dInput, double * * dTarget, vector<int> vectorLayers, double dSuccess, double dLearningRate, double dMomentum);
         void RandomizePatterns();
+        void SetInputTarget(int i);
         void SetRandomizedInput(int p);
         int GetPatterns();
         void PrintInputs();
@@ -41,6 +41,7 @@ class NeuralNetwork {
         void PrintWeights();
         void PrintPatterns();
         void ForwardCalculate();
+        void ConvolutionalForwardCalculate();
         void CalculateError();
         void BackwardCalculate();
         void SetError(double fError);
