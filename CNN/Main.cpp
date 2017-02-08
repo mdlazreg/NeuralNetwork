@@ -1,6 +1,8 @@
 #include "InputImage.h"
 #include "ConvNeuralNetwork.h"
+#ifdef _WIN32
 #include <windows.h>
+#endif
 int main(void)
 {
     double dSuccess = 0.0004;

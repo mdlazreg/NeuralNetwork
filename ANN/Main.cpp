@@ -1,6 +1,8 @@
 #include "Input.h"
 #include "NeuralNetwork.h"
+#ifdef _WIN32
 #include <windows.h>
+#endif
 int main(void)
 {
     double fError = 0.0004;
