@@ -37,7 +37,7 @@ class ConvNeuralNetwork {
         double m_dLearningRate;
         double m_dMomentum;
         double * * * m_dTarget;
-        double * * * m_dInputDelta;
+        double * * * m_dOutputDelta;
         double * * m_arrayTarget;
         double * * * m_arrayInput;
     public:

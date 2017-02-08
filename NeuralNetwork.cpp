@@ -126,7 +126,7 @@ void NeuralNetwork::BackwardCalculate()
         m_vectorInputOutputLayers.at(i)->BackwardCalculate();
         if (i > 0)
         {
-            ((FullyConnectedLayer *)m_vectorInputOutputLayers.at(i - 1))->SetInputDelta(((FullyConnectedLayer *)m_vectorInputOutputLayers.at(i))->GetOutputDelta());
+            ((FullyConnectedLayer *)m_vectorInputOutputLayers.at(i - 1))->SetOutputDelta(((FullyConnectedLayer *)m_vectorInputOutputLayers.at(i))->GetInputDelta());
         }
     }
 }

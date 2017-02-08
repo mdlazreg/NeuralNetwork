@@ -19,64 +19,50 @@ FullyConnectedLayer::FullyConnectedLayer(int iOutput, int iInput, double fLearni
 }
 
 void FullyConnectedLayer::Initialize() {
-    m_dWeights = new double *[m_iOutput]; 
-    for (int i = 0; i < m_iOutput; i++) {
-        m_dWeights[i] = new double[m_iInput + 1];
-        for (int j = 0; j < m_iInput + 1; j++) {
-            m_dWeights[i][j] = dis(rng) - 0.5;
-            
-            //m_dWeights[i][j] = 0.5;
-        }
-    }
-
-    m_dChangeWeights = new double *[m_iOutput]; 
-    for (int i = 0; i < m_iOutput; i++) {
-        m_dChangeWeights[i] = new double[m_iInput + 1];
-        for (int j = 0; j < m_iInput + 1; j++) {
-            m_dChangeWeights[i][j] = dis(rng) - 0.5;
-            m_dChangeWeights[i][j] = 0;
-        }
-    }
-
-    m_dInput = new double [m_iInput + 1]; 
+    m_dInput = new double [m_iInput]; 
+    m_dInputDelta = new double [m_iInput]; 
     for (int j = 0; j < m_iInput; j++) {
         m_dInput[j] = 0;
-    }
-    m_dInput[m_iInput] = 1;//bias
-
-    m_dOutput = new double [m_iOutput]; 
-    for (int i = 0; i < m_iOutput; i++) {
-        m_dOutput[i] = 0;
+        m_dInputDelta[j] = 0;
     }
 
+    m_dWeights = new double *[m_iOutput]; 
+    m_dChangeWeights = new double *[m_iOutput]; 
+    m_dBiases = new double [m_iOutput];
+    m_dChangeBiases = new double [m_iOutput];
+    m_dOutput = new double [m_iOutput];
     m_dTarget = new double [m_iOutput]; 
+    m_dOutputDelta = new double [m_iOutput]; 
+
     for (int i = 0; i < m_iOutput; i++) {
+        m_dWeights[i] = new double[m_iInput];
+        m_dChangeWeights[i] = new double[m_iInput];
+        for (int j = 0; j < m_iInput; j++) {
+            m_dWeights[i][j] = dis(rng) - 0.5;
+            m_dChangeWeights[i][j] = 0;
+        }
+        m_dBiases[i] = dis(rng) - 0.5;
+        m_dChangeBiases[i] = 0;
+        m_dOutput[i] = 0;
         m_dTarget[i] = 0;
-    }
-
-    m_dInputDelta = new double [m_iOutput]; 
-    for (int i = 0; i < m_iOutput; i++) {
-        m_dInputDelta[i] = 0;
-    }
-
-    m_dOutputDelta = new double [m_iInput]; 
-    for (int j = 0; j < m_iInput; j++) {
-        m_dOutputDelta[j] = 0;
+        m_dOutputDelta[i] = 0;
     }
 }
 void FullyConnectedLayer::PrintInput()
 {
-    for (int j = 0 ; j < m_iInput + 1 ; j++ ) {
+    for (int j = 0 ; j < m_iInput ; j++ ) {
         cout << right << setw(NUMBER_WIDTH) << fixed << setprecision(PRECISION) << m_dInput[j];
     }
 }
 void FullyConnectedLayer::PrintWeights() {
-    for (int j = 0 ; j < m_iInput + 1 ; j++ ) {
-        for (int i = 0 ; i < m_iOutput ; i++ ) {  		
+    for (int i = 0 ; i < m_iOutput ; i++ ) {
+        for (int j = 0 ; j < m_iInput ; j++ ) {
     	    cout << right << setw(NUMBER_WIDTH) << fixed << setprecision(PRECISION) << m_dWeights[i][j];
         }
-        cout << flush << endl;
+        cout << right << setw(NUMBER_WIDTH) << fixed << setprecision(PRECISION) << m_dBiases[i];
+        cout << endl << flush;
     }
+    cout << flush << endl;
 }
 void FullyConnectedLayer::PrintOutput() {
     cout << "FullyConnected Layer Output:" << m_iOutput << endl << flush;
@@ -93,7 +79,8 @@ void FullyConnectedLayer::ForwardCalculate()
         for (int j = 0 ; j < m_iInput ; j++ ) {  
     	    m_dOutput[i] += m_dWeights[i][j] * m_dInput[j];
         }
-        m_dOutput[i] += m_dWeights[i][m_iInput] * m_dInput[m_iInput];//bias
+        //m_dOutput[i] += m_dWeights[i][m_iInput] * m_dInput[m_iInput];//bias
+        m_dOutput[i] += m_dBiases[i];
         m_dOutput[i] = 1.0/(1.0 + exp(-m_dOutput[i])) ;
         
     }
@@ -101,18 +88,20 @@ void FullyConnectedLayer::ForwardCalculate()
 void FullyConnectedLayer::BackwardCalculate()
 {
     for( int i = 0 ; i < m_iOutput ; i++ ) {
-        for( int j = 0 ; j < m_iInput + 1 ; j++ ) {
-            m_dChangeWeights[i][j] = m_dLearningRate * m_dInputDelta[i] * m_dInput[j]  + m_dMomentum * m_dChangeWeights[i][j];
+        for( int j = 0 ; j < m_iInput; j++ ) {
+            m_dChangeWeights[i][j] = m_dLearningRate * m_dOutputDelta[i] * m_dInput[j]  + m_dMomentum * m_dChangeWeights[i][j];
             m_dWeights[i][j] += m_dChangeWeights[i][j] ;
         }
+        m_dChangeBiases[i] = m_dLearningRate * m_dOutputDelta[i] + m_dMomentum * m_dChangeBiases[i];
+        m_dBiases[i] += m_dChangeBiases[i];
     }
 
     for( int i = 0 ; i < m_iInput ; i++ ) {
-        m_dOutputDelta[i] = 0.0 ;
+        m_dInputDelta[i] = 0.0 ;
         for( int j = 0 ; j < m_iOutput ; j++ ) {
-            m_dOutputDelta[i] += m_dWeights[j][i] * m_dInputDelta[j] ;
+            m_dInputDelta[i] += m_dWeights[j][i] * m_dOutputDelta[j] ;
         }
-        m_dOutputDelta[i] = m_dOutputDelta[i] * m_dInput[i] * (1.0 - m_dInput[i]) ;
+        m_dInputDelta[i] = m_dInputDelta[i] * m_dInput[i] * (1.0 - m_dInput[i]) ;
         
     }
 }
@@ -147,7 +136,7 @@ void FullyConnectedLayer::CalculateError()
 {
     for( int i = 0 ; i < m_iOutput ; i++ ) {
         
-        m_dInputDelta[i] = (m_dTarget[i] - m_dOutput[i]) * m_dOutput[i] * (1.0 - m_dOutput[i]) ;  
+        m_dOutputDelta[i] = (m_dTarget[i] - m_dOutput[i]) * m_dOutput[i] * (1.0 - m_dOutput[i]) ;  
         m_dError += 0.5 * (m_dTarget[i] - m_dOutput[i]) * (m_dTarget[i] - m_dOutput[i]) ;
         //cout << m_dError << endl << flush;
         //cout << m_dTarget[i] << " " << m_dOutput[i] << endl << flush;
@@ -164,15 +153,15 @@ double FullyConnectedLayer::GetError() {
     return m_dError;        
 }
 
-void FullyConnectedLayer::SetInputDelta(double * InputDetla)
+void FullyConnectedLayer::SetOutputDelta(double * OutputDetla)
 {
     for (int i = 0; i < m_iOutput; i++) {
-        m_dInputDelta[i] = InputDetla[i];
+        m_dOutputDelta[i] = OutputDetla[i];
     }
 }
-double * FullyConnectedLayer::GetOutputDelta()
+double * FullyConnectedLayer::GetInputDelta()
 {
-    return m_dOutputDelta;
+    return m_dInputDelta;
 }
 double * FullyConnectedLayer::GetOutput()
 {

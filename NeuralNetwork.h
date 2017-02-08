@@ -27,7 +27,7 @@ class NeuralNetwork {
         double m_dSuccess;
         double m_dLearningRate;
         double m_dMomentum;
-        double * m_dInputDelta;
+        double * m_dOutputDelta;
         double * * m_arrayTarget;
         double * * m_arrayInput;
     public:

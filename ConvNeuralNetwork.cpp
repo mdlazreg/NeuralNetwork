@@ -145,9 +145,9 @@ void ConvNeuralNetwork::CalculateError()
 void ConvNeuralNetwork::BackwardCalculate()
 {
     m_pFullyConnectedLayer->BackwardCalculate();
-    m_pPoolingLayer->SetInputDelta(m_pFullyConnectedLayer->GetOutputDelta());
+    m_pPoolingLayer->SetOutputDelta(m_pFullyConnectedLayer->GetInputDelta());
     m_pPoolingLayer->BackwardCalculate();
-    m_pConvInputOutputLayer->SetInputDelta(m_pPoolingLayer->GetOutputDelta());
+    m_pConvInputOutputLayer->SetOutputDelta(m_pPoolingLayer->GetInputDelta());
     m_pConvInputOutputLayer->BackwardCalculate();
 }
 

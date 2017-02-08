@@ -18,8 +18,8 @@ class ConvInputOutputLayer : public Layer {
         double * * * m_dTarget;
 
         double * * * m_dOutput;
-        double * * * m_dInputDelta;
-        double * * m_dOutputDelta;
+        double * * m_dInputDelta;
+        double * * * m_dOutputDelta;
     public:
         ConvInputOutputLayer(int iInput, int iFilter, int iPadding, int iStride, int iPatches, double dLearningRate, double dMomentum);
         void PrintInput();
@@ -30,8 +30,8 @@ class ConvInputOutputLayer : public Layer {
         void BackwardCalculate();
         void SetInput(double * * Input);
         void SetTarget(double * * * Target);
-        void SetInputDelta(double * * * InputDetla);
-        double * * GetOutputDelta();
+        void SetOutputDelta(double * * * OutputDetla);
+        double * * GetInputDelta();
         double * * * GetOutput();
         double GetError() ;
         void SetError(double dError);

@@ -24,8 +24,8 @@ class Layer {
         double * m_dTarget;
         double m_dError;
         double * m_dOutput;
-        double * m_dInputDelta;
         double * m_dOutputDelta;
+        double * m_dInputDelta;
     protected:
         double m_dLearningRate;
         double m_dMomentum;

@@ -57,26 +57,26 @@ PoolingLayer::PoolingLayer(int iInput, int iFilter, int iPatches) :
         }
     }
 
-    m_dInputDelta = new double * * [m_iPatches]; 
+    m_dOutputDelta = new double * * [m_iPatches]; 
     for (int f = 0; f < m_iPatches; f++) {
-        m_dInputDelta[f] = new double * [m_iOutput]; 
+        m_dOutputDelta[f] = new double * [m_iOutput]; 
         for (int i = 0; i < m_iOutput; i++) {
-            m_dInputDelta[f][i] = new double[m_iOutput]; 
+            m_dOutputDelta[f][i] = new double[m_iOutput]; 
             for (int j = 0; j < m_iOutput; j++) {
-                m_dInputDelta[f][i][j] = 0;
-                //cout << m_dInputDelta[f][i][j] << endl << flush;
+                m_dOutputDelta[f][i][j] = 0;
+                //cout << m_dOutputDelta[f][i][j] << endl << flush;
             }
         }
     }
 
-    m_dOutputDelta = new double * * [m_iPatches]; 
+    m_dInputDelta = new double * * [m_iPatches]; 
     for (int f = 0; f < m_iPatches; f++) {
-        m_dOutputDelta[f] = new double * [m_iInput]; 
+        m_dInputDelta[f] = new double * [m_iInput]; 
         for (int i = 0; i < m_iInput; i++) {
-            m_dOutputDelta[f][i] = new double[m_iInput]; 
+            m_dInputDelta[f][i] = new double[m_iInput]; 
             for (int j = 0; j < m_iInput; j++) {
-                m_dOutputDelta[f][i][j] = 0;
-                //cout << m_dInputDelta[f][i][j] << endl << flush;
+                m_dInputDelta[f][i][j] = 0;
+                //cout << m_dOutputDelta[f][i][j] << endl << flush;
             }
         }
     }
@@ -157,7 +157,7 @@ void PoolingLayer::CalculateError()
     for( int f = 0 ; f < m_iPatches ; f++ ) {
         for( int i = 0 ; i < m_iOutput ; i++ ) {
             for( int j = 0 ; j < m_iOutput ; j++ ) {
-                m_dInputDelta[f][i][j] = (m_dTarget[f][i][j] - m_dOutput[f][i][j]) * m_dOutput[f][i][j] * (1.0 - m_dOutput[f][i][j]) ;  
+                m_dOutputDelta[f][i][j] = (m_dTarget[f][i][j] - m_dOutput[f][i][j]) * m_dOutput[f][i][j] * (1.0 - m_dOutput[f][i][j]) ;  
                 m_dError += 0.5 * (m_dTarget[f][i][j] - m_dOutput[f][i][j]) * (m_dTarget[f][i][j] - m_dOutput[f][i][j]) ;
             }
         }
@@ -180,12 +180,11 @@ void PoolingLayer::BackwardCalculate()
             for (int j = 0; j < m_iOutput; j++) {
                 for (int fi = 0; fi < m_iFilter; fi++) {
                     for (int fj = 0; fj < m_iFilter; fj++) {
-                        //cout << i*m_iFilter + fi << " " << j*m_iFilter + fj  << "    " << flush;
                         if (i*m_iFilter + fi < m_iInput && j*m_iFilter + fj < m_iInput)
                         {
-                            m_dOutputDelta[f][i*m_iFilter + fi][j*m_iFilter + fj] = 0;
+                            m_dInputDelta[f][i*m_iFilter + fi][j*m_iFilter + fj] = 0;
                             if (m_iWeights[f][i*m_iFilter + fi][j*m_iFilter + fj] == 1) {
-                                m_dOutputDelta[f][i*m_iFilter + fi][j*m_iFilter + fj] = m_dInputDelta[f][i][j];
+                                m_dInputDelta[f][i*m_iFilter + fi][j*m_iFilter + fj] = m_dOutputDelta[f][i][j];
                             }
                         }
                     }
@@ -193,28 +192,6 @@ void PoolingLayer::BackwardCalculate()
             }
         }
     }
-
-
-    /*
-    for (int f = 0; f < m_iPatches; f++) {
-        for( int i = 0 ; i < m_iInput ; i++ ) {
-            for( int j = 0 ; j < m_iInput ; j++ ) {
-                m_dOutputDelta[f][i][j] = 0.0 ;
-                for (int io = 0; io < m_iOutput; io++) {
-                    for (int jo = 0; jo < m_iOutput; jo++) {
-                        for(int fi = 0; fi < m_iFilter; fi++) {
-                            for (int fj = 0; fj < m_iFilter; fj++) {
-                                if (m_iWeights[f][io][jo] == 1) {
-                                    m_dOutputDelta[f][i][j] = m_dInputDelta[f][io][jo] ;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
 }
 
 void PoolingLayer::SetTarget(double * * * Target)
@@ -238,29 +215,29 @@ void PoolingLayer::SetInput(double * * * Input)
         }
     }
 }
-void PoolingLayer::SetInputDelta(double * * * InputDetla)
+void PoolingLayer::SetOutputDelta(double * * * OutputDetla)
 {
     for (int f = 0; f < m_iPatches; f++) {
         for (int i = 0; i < m_iOutput; i++) {
             for (int j = 0; j < m_iOutput; j++) {
-                m_dInputDelta[f][i][j] = InputDetla[f][i][j];
+                m_dOutputDelta[f][i][j] = OutputDetla[f][i][j];
             }
         }
     }
 }
-void PoolingLayer::SetInputDelta(double * InputDetla)
+void PoolingLayer::SetOutputDelta(double * OutputDetla)
 {
     for (int f = 0; f < m_iPatches; f++) {
         for (int i = 0; i < m_iOutput; i++) {
             for (int j = 0; j < m_iOutput; j++) {
-                m_dInputDelta[f][i][j] = InputDetla[f*m_iOutput*m_iOutput + i*m_iOutput + j];
+                m_dOutputDelta[f][i][j] = OutputDetla[f*m_iOutput*m_iOutput + i*m_iOutput + j];
             }
         }
     }
 }
-double * * * PoolingLayer::GetOutputDelta()
+double * * * PoolingLayer::GetInputDelta()
 {
-    return m_dOutputDelta;
+    return m_dInputDelta;
 }
 double * * * PoolingLayer::GetOutput()
 {

@@ -8,12 +8,14 @@ class FullyConnectedLayer : public Layer {
         int m_iPatches;
         double * * m_dWeights;
         double * * m_dChangeWeights;
+        double * m_dBiases;
+        double * m_dChangeBiases;
         double * m_dInput;
         double * m_dTarget;
         double m_dError;
         double * m_dOutput;
-        double * m_dInputDelta;
         double * m_dOutputDelta;
+        double * m_dInputDelta;
     public:
         FullyConnectedLayer(int iOutput, int iInput, double dLearningRate, double dMomentum);
         FullyConnectedLayer(int iInput, int iPatches, int iOutput, double dLearningRate, double dMomentum);
@@ -27,8 +29,8 @@ class FullyConnectedLayer : public Layer {
         void SetInput(double * * * Input);
         void SetInput(double * Input);
         void SetTarget(double * Target);
-        void SetInputDelta(double * InputDetla);
-        double * GetOutputDelta();
+        void SetOutputDelta(double * OutputDetla);
+        double * GetInputDelta();
         double * GetOutput();
         int GetOutputSize();
         int GetInputSize();
